@@ -1,0 +1,22 @@
+//
+//  Article.swift
+//  Rx-MVVM-NewsApp-Sample
+//
+//  Created by cano on 2022/06/18.
+//
+
+import Foundation
+
+struct APIResponse: Decodable {
+    let articles: [Article]
+}
+
+struct Article: Decodable, Equatable  {
+    let title: String
+    let description: String
+    
+    init(title: String, description: String) {
+        self.title = title
+        self.description = description
+    }
+}

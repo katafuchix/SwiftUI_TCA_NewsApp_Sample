@@ -6,12 +6,17 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
 
 @main
 struct SwiftUI_TCA_NewsApp_SampleApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ArticleView(
+                store: Store(initialState: ArticleFeature.State()) {
+                    ArticleFeature()
+                }
+            )
         }
     }
 }
