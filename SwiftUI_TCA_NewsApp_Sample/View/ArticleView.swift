@@ -16,11 +16,26 @@ struct ArticleView: View {
         NavigationView {
             ZStack {
                 // 記事一覧
-                List(store.articles, id: \.title) { article in
-                    ArticleRow(article: article)
+                // Listだとtransitionが効かないためScrollView+LazyVStackを使用
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(store.articles, id: \.title) { article in
+                            ArticleRow(article: article)
+                                // 左からスライドイン + フェードイン
+                                .transition(
+                                    .asymmetric(
+                                        insertion: .move(edge: .leading).combined(with: .opacity),
+                                        removal: .opacity
+                                    )
+                                )
+                            Divider()
+                        }
+                    }
                 }
-                .listStyle(.plain)
+                // 記事が追加されたときにスプリングアニメーションを適用
+                .animation(.spring(duration: 1, bounce: 0.3), value: store.articles)
                 .navigationTitle("Tech News")
+                .navigationSubtitle("SwiftUI TCA")
  
                 // ローディング
                 if store.isLoading {
