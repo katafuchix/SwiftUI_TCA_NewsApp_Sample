@@ -19,6 +19,22 @@ extension ArticleClient: DependencyKey {
     // 本番用の実装
     static let liveValue = ArticleClient(
         fetchArticles: {
+            // ArticleAPI.topHeadlinesからURLRequestを生成
+            let request = ArticleAPI.topHeadlines.asURLRequest()
+            let (data, response) = try await URLSession.shared.data(for: request)
+ 
+            guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+                throw ArticleError.serverError
+            }
+ 
+            do {
+                let apiResponse = try JSONDecoder().decode(APIResponse.self, from: data)
+                return apiResponse.articles
+            } catch {
+                throw ArticleError.decodingError
+            }
+            /*
+            // Routerパターンを利用しない場合
             let urlStr = "https://newsapi.org/v2/top-headlines?sources=techcrunch&apiKey=\(Constants.api_key)"
             guard let url = URL(string: urlStr) else { throw ArticleError.invalidURL }
  
@@ -31,6 +47,7 @@ extension ArticleClient: DependencyKey {
  
             let apiResponse = try JSONDecoder().decode(APIResponse.self, from: data)
             return apiResponse.articles
+            */
         }
     )
  
